@@ -1,0 +1,6 @@
+.streamlit/
+venv/
+
+chat2.py
+chat3.py
+main.py
