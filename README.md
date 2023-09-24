@@ -1,4 +1,5 @@
 # Hotel Booking Chatbot
+Chatbot with RAG + Memory - Cohere AI, Streamlit, Langchain, Qdrant
 
 ## Overview
 
