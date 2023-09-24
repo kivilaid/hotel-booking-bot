@@ -5,9 +5,9 @@
 This project is a chatbot application built using Cohere AI. The chatbot assists users in making hotel bookings by providing information and answering queries related to hotel reservations.
 Hotel booking bot for Sheraton hotel. Made with cohere AI
 
-Check the blog for more
 <img src="https://github.com/4N1Z/hotel-booking-bot/assets/91843271/31cb54e7-9db1-4251-a93b-693726e73e48" alt="Screenshot 2023-09-24 115029" width="50%">
 
+## Check [blog](https://aniz.hashnode.dev/chatbot-with-rag-memory-cohere-ai-streamlit-langchain-qdrant) to know more about the project
 ## Features
 
 - **Chat Interface**: Users can interact with the chatbot through a user-friendly chat interface.
