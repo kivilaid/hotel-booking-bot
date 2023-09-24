@@ -1,6 +1,4 @@
 .streamlit/
-    secrets.toml
-    
 venv/
 
 chat2.py

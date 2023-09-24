@@ -68,7 +68,6 @@ def initialize_session_state() :
     if "input_value" not in st.session_state:
         st.session_state.input_value = ""
 
-
     if "history" not in st.session_state:
         st.session_state.history = []
 
@@ -79,7 +78,7 @@ def initialize_session_state() :
         You are a Hotel Receptionist at "Four Points by Sheraton" hotel.
 
         You will be given a context of the conversation made so far followed by a customer's question, 
-        give the answer to the question using the context. 
+        give the answer to the question using the context. If the context is not provided then answer the question based on the knowledge base.
         The answer should be short, straight and to the point. If you don't know the answer, reply that the answer is not available.
         Never Hallucinate
         
@@ -107,6 +106,8 @@ def initialize_session_state() :
             combine_docs_chain_kwargs=chain_type_kwargs,
            
         )
+
+
 #Callblack function which when activated calls all the other
 #functions 
 def on_click_callback():
@@ -122,7 +123,7 @@ def on_click_callback():
         with st.spinner('Generating response...'):
 
             llm_response = st.session_state.chain(
-                {"question": customer_prompt,"summaries": st.session_state.chain.memory.buffer}, return_only_outputs=True)
+                {"context": st.session_state.chain.memory.buffer, "question": customer_prompt}, return_only_outputs=True)
 
     st.session_state.history.append(
         Message("customer", customer_prompt)
