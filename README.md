@@ -15,6 +15,9 @@ Check the blog for more
 - **Hotel Information**: The chatbot can provide details about available hotels, room types, and amenities.
 
 - **Booking Assistance**: Users can inquire about room availability, rates, and make reservations through the chatbot.
+  
+- **DISCLAIMER**:
+- - We are using a short knowledge base and an trail api key for cohere api. Therefore the responses may vary
 
 ## Deployment
 
