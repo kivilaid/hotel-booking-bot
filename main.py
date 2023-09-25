@@ -21,8 +21,8 @@ QDRANT_API_KEY = st.secrets["QDRANT_API_KEY"]
 # Streamlit header
 st.set_page_config(page_title="Co:Chat - An LLM-powered chat bot")
 st.title("Sheraton-Bot")
-st.write("This is a chatbot for Sheraton Hotel")
-st.write("(Knowleddge base is limited to Sheraton Hotel only and currently using trial api key of cohere.)")
+st.write("This is a chatbot for Sheraton Hotel (Knowledge base is limited to Sheraton Hotel) ")
+# st.write("(Knowledge base is limited to Sheraton Hotel and using trial api key of cohere.)")
 
 # Defining message class
 @dataclass
