@@ -5,10 +5,9 @@ from dataclasses import dataclass
 
 import qdrant_client
 from langchain.embeddings.cohere import CohereEmbeddings
-
 from langchain.vectorstores import Qdrant
 
-from langchain.chains import ConversationalRetrievalChain
+from langchain.chains import ConversationalRetrievalChain,LLMChain, RetrievalQA
 from langchain.embeddings.cohere import CohereEmbeddings
 from langchain.llms import Cohere
 from langchain.prompts import PromptTemplate
@@ -21,7 +20,7 @@ QDRANT_API_KEY = st.secrets["QDRANT_API_KEY"]
 # Streamlit header
 st.set_page_config(page_title="Co:Chat - An LLM-powered chat bot")
 st.title("Sheraton-Bot")
-st.write("This is a chatbot for Sheraton Hotel (Knowledge base is limited to Sheraton Hotel) ")
+st.write("This is a chatbot for Sheraton Hotel (Knowledge base is limited to Sheraton Hotel)")
 # st.write("(Knowledge base is limited to Sheraton Hotel and using trial api key of cohere.)")
 
 # Defining message class
@@ -76,12 +75,11 @@ def initialize_session_state() :
 
         #create custom prompt for your use case
         prompt_template = """
-        You are a Hotel Receptionist at "Four Points by Sheraton" hotel.
-
+        You are Jarvis, a Hotel Receptionist bot of "Four Points by Sheraton" hotel.
+           
         You will be given a context of the conversation made so far followed by a customer's question, 
-        give the answer to the question using the context. If the context is not provided then answer the question based on the knowledge base.
+        give the answer to the question using the context. 
         The answer should be short, straight and to the point. If you don't know the answer, reply that the answer is not available.
-        Never Hallucinate
         
         Context: {context}
 
@@ -93,21 +91,29 @@ def initialize_session_state() :
         )
 
         chain_type_kwargs = { "prompt" : PROMPT }
-        llm = Cohere(model = "command", temperature=0.5)
-
+        #build your LLM
+        llm = Cohere(model = "command", temperature=0.1)
         #build your chain for RAG+C
-        
+        template = (
+                """Combine the chat history and follow up question into 
+                a standalone question. 
+                If chat hsitory is empty, use the follow up question as it is.
+                Chat History: {chat_history}
+                Follow up question: {question}"""
+            )
+        # TRY TO ADD THE INPUT VARIABLES
+        prompt = PromptTemplate.from_template(template)
+        # question_generator_chain = LLMChain(llm=llm, prompt=prompt)
         print("vector store loaded !")
         st.session_state.chain = ConversationalRetrievalChain.from_llm(     
             llm = llm,
             chain_type = "stuff",
             memory = ConversationSummaryMemory(llm = llm, memory_key='chat_history', input_key='question', output_key= 'answer', return_messages=True),
-            retriever = vector_store.as_retriever(),
+            retriever = vector_store.as_retriever(search_type="mmr"),
+            condense_question_prompt = prompt,
             return_source_documents=False,
             combine_docs_chain_kwargs=chain_type_kwargs,
-           
         )
-
 
 #Callblack function which when activated calls all the other
 #functions 
@@ -125,6 +131,8 @@ def on_click_callback():
 
             llm_response = st.session_state.chain(
                 {"context": st.session_state.chain.memory.buffer, "question": customer_prompt}, return_only_outputs=True)
+            
+         
 
     st.session_state.history.append(
         Message("customer", customer_prompt)
@@ -179,6 +187,8 @@ def main():
             type="secondary",
             on_click=on_click_callback,
         )
+
+        
 
     # Update the session state variable when the input field changes
     st.session_state.input_value = cols[0].text_input

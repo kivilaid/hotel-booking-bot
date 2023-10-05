@@ -91,6 +91,25 @@ def initialize_session_state() :
         prompt_template = """
         You are a Hotel Receptionist at "Four Points by Sheraton" hotel.
 
+         Here is the information about the hotel in JSON format:: 
+        "name":"Four Points by Sheraton Kochi Infopark","address":"Four Points by Sheraton Kochi Infopark 
+        Infopark Kochi Phase 1 Campus, Infopark P.O, Kakkanad, Kochi, Kerala, India, 682042","phone":"4847160000",
+        "email":"sheratton@gmail.com","website":"https://www.marriott.com/en-us/hotels/COKFP-four-points-kochi-infopark/overview/",
+        "description":"Welcome to the Marriott Hotel Discover a world of comfort and luxury at the Marriott Hotel, 
+        where your every need is our top priority. Conveniently nestled in the heart of the city, our hotel offers a 
+        perfect blend of modern elegance and timeless sophistication.  ,Exceptional Accommodations  ,
+        Indulge in our spacious and beautifully appointed rooms and suites, designed to provide the 
+        ultimate in relaxation and convenience. Whether you're traveling for business or leisure, you'll 
+        find everything you need to make your stay unforgettable. Enjoy plush bedding, stunning city views, and a 
+        range of modern amenities to enhance your comfort.  ,Exquisite Dining  ,Savor a culinary journey at our on-site 
+        restaurants, where our talented chefs craft a diverse menu of delectable dishes. From international flavors to 
+        local delicacies, there's something to satisfy every palate. Don't forget to explore our bar and lounge for 
+        handcrafted cocktails and a vibrant atmosphere.  ,Unparalleled Services Our commitment to excellence extends
+        to our services. Experience the warm hospitality of our dedicated staff, ready to assist you with any request. 
+        From 24-hour room service to concierge assistance, we're here to ensure your stay is seamless and enjoyable.  
+        World-Class Amenities, Stay active and energized with our fitness center, equipped with state-of-the-art equipment. For business travelers, our full-service business center provides all the tools you need to stay productive. Relax and unwind in our spa or take a dip in our refreshing pool.  ,Explore the City  ,Our central location puts you in the heart of the action. Explore nearby attractions, museums, shopping districts, and entertainment venues. Whether you're here for work or leisure, you'll find endless opportunities to make the most of your visit.  ,Book Your Stay  ,Discover why the Marriott Hotel is the preferred choice for discerning travelers. Experience luxury, convenience, and unmatched hospitality during your stay with us. Book your reservation today and embark on a memorable journey in our world of elegance and comfort.  ,","rooms":[["_id":"64ff544ce83c1395a075ef82","name":"Twin/Twin Deluxe Guest Room","description":"2 Twin/Single Beds, Guest Room","rate":["$numberDecimal":"7400"],"capacity":3,"amenities":["Air-conditioned  ,Non-smoking  ,Connecting rooms are available  ,Lighted makeup mirror  ,Hair dryer  ,Robe  ,Slippers  ,Chair, oversized  ,Alarm clock  ,Safe, in room  ,Desk, writing/work, electrical outlet  ,Iron and ironing board  ,Room service, 24-hour  ,Bottled water, complimentary  ,Coffee/tea maker  ,Instant hot water  ,Mini fridge  ,Phones  ,Phone features: speaker phone, and phone lines (2)  ,High-speed internet, complimentary  ,Wireless internet, complimentary  ,Newspaper delivered to room, on request  ,49in/124cm LED TV  ,Premium movie channels  ,Cable/satellite  ,International cable/satellite  ,Radio"],"__v":0],["_id":"64ff544ce83c1395a075ef83","name":"1-Bedroom Suite with Executive Lounge Access","description":"1 King Bed, Executive Lounge Access, Shower Only, High Floor","rate":["$numberDecimal":"11600"],"capacity":3,"amenities":["Air-conditioned  ,Non-smoking  ,Connecting rooms are available  ,Lighted makeup mirror  ,Hair dryer  ,Robe  ,Slippers  ,Sofa  ,Chair  ,Alarm clock  ,Safe, in room  ,Desk, writing/work, electrical outlet  ,Iron and ironing board  ,Room service, 24-hour  ,Bottled water, complimentary  ,Coffee/tea maker  ,Instant hot water  ,Mini fridge  ,Phones  ,Phone features: speaker phone, and phone lines (2)  ,High-speed internet, complimentary  ,Wireless internet, complimentary  ,Newspaper delivered to room, on request  ,2 TVs  ,Premium movie channels  ,Cable/satellite  ,International cable/satellite  ,Radio"],"__v":0],["_id":"64ff544ce83c1395a075ef84","name":"1-Bedroom Suite with Executive Lounge Access, Shower and Tub Combination","description":"1 King Bed, Executive Lounge Access, Shower and Tub Combination, High Floor","rate":["$numberDecimal":"12600"],"capacity":3,"amenities":["Air-conditioned  ,Non-smoking  ,Connecting rooms are available  ,Lighted makeup mirror  ,Hair dryer  ,Robe  ,Slippers  ,Sofa  ,Chair, oversized  ,Alarm clock  ,Safe, in room  ,Desk, writing/work, electrical outlet  ,Iron and ironing board  ,Room service, 24-hour  ,Bottled water, complimentary  ,Coffee/tea maker  ,Instant hot water  ,Mini fridge  ,Phones  ,Phone features: speaker phone, and phone lines (2)  ,High-speed internet, complimentary  ,Wireless internet, complimentary  ,Newspaper delivered to room, on request  ,2 TVs  ,Premium movie channels  ,Cable/satellite  ,International cable/satellite  ,Radio"],"__v":0]],"ammenities":[],"nearbyAttractions":
+
+
         You will be given a context of the conversation made so far followed by a customer's question, 
         give the answer to the question using the context. 
         The answer should be short, straight and to the point.
@@ -107,7 +126,7 @@ def initialize_session_state() :
         )
 
         chain_type_kwargs = { "prompt" : PROMPT }
-        llm = Cohere(model = "command", temperature=0.5)
+        llm = Cohere(model = "command-light", temperature=0.5)
 
         #build your chain for RAG+C
         st.session_state.chain = ConversationalRetrievalChain.from_llm(     
@@ -119,6 +138,7 @@ def initialize_session_state() :
            combine_docs_chain_kwargs=chain_type_kwargs,
            
         )
+        print(st.session_state.chain.memory.buffer)
 
 #Callblack function which when activated calls all the other
 #functions 
@@ -138,7 +158,7 @@ def on_click_callback():
             llm_response = st.session_state.chain(
                 {"question": customer_prompt,"summaries": st.session_state.chain.memory.buffer}, return_only_outputs=True)
             
-            # print(st.session_state.chain.memory.buffer)
+           
             # answer = llm_response["answer"]
 
     st.session_state.history.append(
